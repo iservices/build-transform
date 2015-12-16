@@ -9,6 +9,9 @@ const del = require('del');
 const path = require('path');
 const fs = require('fs');
 
+// holds watch streams that have been created.
+const watchStreams = {};
+
 /**
   * Adjust the base for globs so we can specify exact files
   * and still have them show up in the right place after transformation.
@@ -17,7 +20,7 @@ const fs = require('fs');
   * @returns {stream} A stream that adjusts the base property on vinyl objects.
   */
 function adjustVinylBase(base) {
-  return through({ objectMode: true }, function throughStream(data, encoding, done) {
+  return through({ objectMode: true }, function (data, encoding, done) {
     data.base = base;
     this.push(data);
     done();
@@ -33,12 +36,12 @@ function adjustVinylBase(base) {
  * @returns {stream} A stream that transforms the files.
  */
 function transform(opts) {
-  return gulp.src(opts.glob)
-    .pipe(adjustVinylBase(opts.input.codeBaseDir))
+  return gulp.src(opts.input.glob)
+    .pipe(adjustVinylBase(opts.input.inputDir))
     .pipe(babel({
       presets: ['es2015', 'react']
     }))
-    .on('error', function transformError(err) {
+    .on('error', function (err) {
       if (opts.errorHandler) {
         opts.errorHandler(err);
       } else {
@@ -76,16 +79,16 @@ function notify(err, title, message) {
  * Register transform tasks.
  *
  * @param {object} opts - Configuration options.
- * @param {stirng|string[]} opts.glob - A glob that identifies files to transform.
- * @param {string} opts.codeBaseDir - The base directory that contains all code being transformed.
+ * @param {string} opts.inputDir - The base directory that contains all code being transformed.
+ * @param {stirng|string[]} opts.glob - A glob relative to the inputDir that identifies files to transform.
  * @param {string} opts.outputDir - The directory to output files to.
  * @param {string} [opts.tasksPrefix] - Optional prefix for task names.
  * @returns {function} - The function to register tasks.
  */
-module.exports = function registerTasks(opts) {
+module.exports = function (opts) {
   const input = {
-    glob: opts.glob,
-    codeBaseDir: opts.codeBaseDir,
+    glob: path.normalize(opts.inputDir + '/' + opts.glob),
+    inputDir: opts.inputDir,
     outputDir: opts.outputDir
   };
 
@@ -98,7 +101,7 @@ module.exports = function registerTasks(opts) {
   /*
    * A task that transforms all of the server code.
    */
-  gulp.task('transform', function transformTask() {
+  gulp.task(input.tasksPrefix + 'transform', function () {
     del.sync(input.outputDir);
     return transform({ input: input });
   });
@@ -106,15 +109,19 @@ module.exports = function registerTasks(opts) {
   /*
    * Watches for changes to files and transforms the when they have changed.
    */
-  gulp.task('watchTransform', function watchTransformTask() {
-    watch(input.glob, function watchTransform(file) {
+  gulp.task(input.tasksPrefix + 'watch-transform', function () {
+    watchStreams[input.tasksPrefix + 'watch-transform'] = watch(input.glob, function (file) {
       console.log('watch transform: ' + file.path + ' event: ' + file.event);
       if (file.event === 'unlink') {
-        fs.unlinkSync(path.normalize(input.outputDir + file.path.slice(input.codeBaseDir.length)));
+        fs.unlinkSync(path.normalize(input.outputDir + file.path.slice(input.inputDir.length)));
       } else {
         transform({
-          glob: file.path,
-          errorHandler: function transformError(err) {
+          input: {
+            glob: file.path,
+            inputDir: input.inputDir,
+            outputDir: input.outputDir
+          },
+          errorHandler: function (err) {
             notify(err, 'Transform Error', 'See console for details.');
           }
         });

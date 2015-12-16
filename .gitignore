@@ -6,3 +6,7 @@ npm-debug.log
 
 # mac system file
 .DS_Store
+
+# generated stuff
+testOutput/
+testResults/
