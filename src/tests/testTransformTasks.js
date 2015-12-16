@@ -28,6 +28,8 @@ describe('registerTasks', function () {
   });
 
   it('simple watch task setup works as expected.', function (done) {
+    this.timeout(8000);
+
     del.sync(path.normalize(__dirname + '/../../testOutput/watch/'));
     require(__dirname + '/fixtures/tasksWatch/gulpfile');
     gulp.on('task_stop', function (e) {
@@ -37,7 +39,7 @@ describe('registerTasks', function () {
         setTimeout(function (finish) {
           fs.statSync(__dirname + '/../../testOutput/watch/lib/logger.js');
           finish();
-        }, 1000, done);
+        }, 4000, done);
       }
     });
     gulp.start('watch-watch-transform');
