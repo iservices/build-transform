@@ -10,7 +10,6 @@ const fs = require('fs');
  * Unit tests for registerTasks function.
  */
 describe('registerTasks', function () {
-
   gulp.on('stop', function () {
     process.exit(0); // need this call to end long running watch process
   });
