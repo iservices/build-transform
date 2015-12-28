@@ -86,8 +86,24 @@ function notify(err, title, message) {
  * @returns {function} - The function to register tasks.
  */
 module.exports = function (opts) {
+  let globParam = null;
+  if (Array.isArray(opts.glob)) {
+    globParam = opts.glob.map(function (value) {
+      if (value[0] === '!') {
+        return '!' + path.normalize(opts.inputDir + '/' + value.slice(1));
+      }
+      return path.normalize(opts.inputDir + '/' + value);
+    });
+  } else {
+    if (opts.glob[0] === '!') {
+      globParam = '!' + path.normalize(opts.inputDir + '/' + opts.glob.slice(1));
+    } else {
+      globParam = path.normalize(opts.inputDir + '/' + opts.glob);
+    }
+  }
+
   const input = {
-    glob: path.normalize(opts.inputDir + '/' + opts.glob),
+    glob: globParam,
     inputDir: opts.inputDir,
     outputDir: opts.outputDir
   };
