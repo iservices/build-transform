@@ -3,6 +3,7 @@
 
 const gulp = require('gulp');
 const babel = require('gulp-babel');
+const maps = require('gulp-sourcemaps');
 const watch = require('gulp-watch');
 const through = require('through2');
 const del = require('del');
@@ -38,6 +39,7 @@ function adjustVinylBase(base) {
 function transform(opts) {
   return gulp.src(opts.input.glob)
     .pipe(adjustVinylBase(opts.input.inputDir))
+    .pipe(maps.init())
     .pipe(babel({
       presets: ['es2015', 'react']
     }))
@@ -48,6 +50,7 @@ function transform(opts) {
         throw err;
       }
     })
+    .pipe(maps.write('.'))
     .pipe(gulp.dest(opts.input.outputDir));
 }
 
