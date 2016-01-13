@@ -86,6 +86,7 @@ function notify(err, title, message) {
  * @param {stirng|string[]} opts.glob - A glob relative to the inputDir that identifies files to transform.
  * @param {string} opts.outputDir - The directory to output files to.
  * @param {string} [opts.tasksPrefix] - Optional prefix for task names.
+ * @param {string[]} [opts.tasksDependencies] - Optional array of tasks names that must be completed before these registered tasks runs.
  * @returns {function} - The function to register tasks.
  */
 module.exports = function (opts) {
@@ -108,7 +109,8 @@ module.exports = function (opts) {
   const input = {
     glob: globParam,
     inputDir: opts.inputDir,
-    outputDir: opts.outputDir
+    outputDir: opts.outputDir,
+    tasksDependencies: opts.tasksDependencies || []
   };
 
   if (opts.tasksPrefix) {
@@ -120,7 +122,7 @@ module.exports = function (opts) {
   /*
    * A task that transforms all of the server code.
    */
-  gulp.task(input.tasksPrefix + 'transform', function () {
+  gulp.task(input.tasksPrefix + 'transform', input.tasksDependencies, function () {
     del.sync(input.outputDir);
     return transform({ input: input });
   });
