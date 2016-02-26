@@ -4,7 +4,6 @@
 const gulp = require('gulp');
 const babel = require('gulp-babel');
 const maps = require('gulp-sourcemaps');
-const watch = require('gulp-watch');
 const through = require('through2');
 const del = require('del');
 const path = require('path');
@@ -131,6 +130,7 @@ module.exports = function (opts) {
    * Watches for changes to files and transforms the when they have changed.
    */
   gulp.task(input.tasksPrefix + 'watch-transform', function () {
+    const watch = require('gulp-watch');
     watchStreams[input.tasksPrefix + 'watch-transform'] = watch(input.glob, function (file) {
       console.log('watch transform: ' + file.path + ' event: ' + file.event);
       if (file.event === 'unlink') {
