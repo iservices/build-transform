@@ -33,8 +33,10 @@ describe('registerTasks', function () {
     require(__dirname + '/fixtures/tasksWatch/gulpfile');
     gulp.on('task_stop', function (e) {
       if (e.task === 'watch-watch-transform') {
-        const text = fs.readFileSync(__dirname + '/fixtures/tasksWatch/chat/logger.js', 'utf8');
-        fs.writeFileSync(__dirname + '/fixtures/tasksWatch/chat/logger.js', text);
+        setTimeout(function () {
+          const text = fs.readFileSync(__dirname + '/fixtures/tasksWatch/chat/logger.js', 'utf8');
+          fs.writeFileSync(__dirname + '/fixtures/tasksWatch/chat/logger.js', text);
+        }, 2000);
         setTimeout(function (finish) {
           fs.statSync(__dirname + '/../../testOutput/watch/lib/logger.js');
           finish();
