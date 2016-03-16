@@ -85,8 +85,8 @@ function notify(err, title, message) {
  * @returns {function} - The function to register tasks.
  */
 module.exports = function (opts) {
-  opts.glob = Array.isArray(opts.glob) ? opts.glob : [opts.glob];
-  const globParam = opts.glob.map(function (value) {
+  const globArray = Array.isArray(opts.glob) ? opts.glob : [opts.glob];
+  const globParam = globArray.map(function (value) {
     if (value[0] === '!') {
       return '!' + path.join(opts.inputDir, value.slice(1));
     }
