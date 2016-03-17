@@ -69,11 +69,7 @@ function notify(err, title, message) {
   });
 
   if (err) {
-    if (err.message) {
-      console.log(err.message);
-    } else {
-      console.log(err);
-    }
+    console.log(err.message || err);
   }
 }
 
@@ -89,34 +85,21 @@ function notify(err, title, message) {
  * @returns {function} - The function to register tasks.
  */
 module.exports = function (opts) {
-  let globParam = null;
-  if (Array.isArray(opts.glob)) {
-    globParam = opts.glob.map(function (value) {
-      if (value[0] === '!') {
-        return '!' + path.normalize(opts.inputDir + '/' + value.slice(1));
-      }
-      return path.normalize(opts.inputDir + '/' + value);
-    });
-  } else {
-    if (opts.glob[0] === '!') {
-      globParam = '!' + path.normalize(opts.inputDir + '/' + opts.glob.slice(1));
-    } else {
-      globParam = path.normalize(opts.inputDir + '/' + opts.glob);
+  const globArray = Array.isArray(opts.glob) ? opts.glob : [opts.glob];
+  const globParam = globArray.map(function (value) {
+    if (value[0] === '!') {
+      return '!' + path.join(opts.inputDir, value.slice(1));
     }
-  }
+    return path.join(opts.inputDir, value);
+  });
 
   const input = {
     glob: globParam,
     inputDir: opts.inputDir,
     outputDir: opts.outputDir,
-    tasksDependencies: opts.tasksDependencies || []
+    tasksDependencies: opts.tasksDependencies || [],
+    tasksPrefix: opts.tasksPrefix ? opts.tasksPrefix + '-' : ''
   };
-
-  if (opts.tasksPrefix) {
-    input.tasksPrefix = opts.tasksPrefix + '-';
-  } else {
-    input.tasksPrefix = '';
-  }
 
   /*
    * A task that transforms all of the server code.
@@ -134,7 +117,7 @@ module.exports = function (opts) {
     watchStreams[input.tasksPrefix + 'watch-transform'] = watch(input.glob, function (file) {
       console.log('watch transform: ' + file.path + ' event: ' + file.event);
       if (file.event === 'unlink') {
-        fs.unlinkSync(path.normalize(input.outputDir + file.path.slice(input.inputDir.length)));
+        fs.unlinkSync(path.join(input.outputDir, file.path.slice(input.inputDir.length)));
       } else {
         transform({
           input: {

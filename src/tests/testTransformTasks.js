@@ -15,7 +15,7 @@ describe('registerTasks', function () {
   });
 
   it('simple task setup works as expected.', function (done) {
-    del.sync(path.normalize(__dirname + '/../../testOutput/simple/'));
+    del.sync(path.join(__dirname, '/../../testOutput/simple/'));
     require(__dirname + '/fixtures/tasksSimple/gulpfile');
     gulp.on('task_stop', function (e) {
       if (e.task === 'simple-transform') {
@@ -29,7 +29,7 @@ describe('registerTasks', function () {
   it('simple watch task setup works as expected.', function (done) {
     this.timeout(8000);
 
-    del.sync(path.normalize(__dirname + '/../../testOutput/watch/'));
+    del.sync(path.join(__dirname, '/../../testOutput/watch/'));
     require(__dirname + '/fixtures/tasksWatch/gulpfile');
     gulp.on('task_stop', function (e) {
       if (e.task === 'watch-watch-transform') {
