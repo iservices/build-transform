@@ -2,8 +2,7 @@
 'use strict';
 
 const gulp = require('gulp');
-const babel = require('gulp-babel');
-const maps = require('gulp-sourcemaps');
+const tsc = require('gulp-tsc');
 const through = require('through2');
 const del = require('del');
 const path = require('path');
@@ -38,9 +37,11 @@ function adjustVinylBase(base) {
 function transform(opts) {
   return gulp.src(opts.input.glob)
     .pipe(adjustVinylBase(opts.input.inputDir))
-    .pipe(maps.init())
-    .pipe(babel({
-      presets: ['es2015', 'react']
+    .pipe(tsc({
+      module: 'commonjs',
+      target: 'ES5',
+      allowJs: true,
+      sourceMap: true
     }))
     .on('error', function (err) {
       if (opts.errorHandler) {
@@ -49,7 +50,6 @@ function transform(opts) {
         throw err;
       }
     })
-    .pipe(maps.write('.'))
     .pipe(gulp.dest(opts.input.outputDir));
 }
 
