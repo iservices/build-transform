@@ -40,7 +40,7 @@ function transform(opts) {
     .pipe(tsc({
       module: 'commonjs',
       target: 'ES5',
-      allowJs: true,
+      allowJs: !opts.input.declaration,
       sourceMap: true,
       declaration: opts.input.declaration
     }))
