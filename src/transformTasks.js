@@ -41,7 +41,8 @@ function transform(opts) {
       module: 'commonjs',
       target: 'ES5',
       allowJs: true,
-      sourceMap: true
+      sourceMap: true,
+      declaration: opts.input.declaration
     }))
     .on('error', function (err) {
       if (opts.errorHandler) {
@@ -82,6 +83,7 @@ function notify(err, title, message) {
  * @param {string} opts.outputDir - The directory to output files to.
  * @param {string} [opts.tasksPrefix] - Optional prefix for task names.
  * @param {string[]} [opts.tasksDependencies] - Optional array of tasks names that must be completed before these registered tasks runs.
+ * @param {boolean} [opts.declaration] - Optional flag that when set to true will generate declaration files (*.d.ts).  Default is false.
  * @returns {function} - The function to register tasks.
  */
 module.exports = function (opts) {
@@ -98,7 +100,8 @@ module.exports = function (opts) {
     inputDir: opts.inputDir,
     outputDir: opts.outputDir,
     tasksDependencies: opts.tasksDependencies || [],
-    tasksPrefix: opts.tasksPrefix ? opts.tasksPrefix + '-' : ''
+    tasksPrefix: opts.tasksPrefix ? opts.tasksPrefix + '-' : '',
+    declaration: opts.declaration || false
   };
 
   /*
