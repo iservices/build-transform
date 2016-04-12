@@ -26,6 +26,18 @@ describe('registerTasks', function () {
     gulp.start('simple-transform');
   });
 
+  it('TS simple task setup works as expected.', function (done) {
+    del.sync(path.join(__dirname, '/../../testOutput/simpleTS/'));
+    require(__dirname + '/fixtures/tasksSimpleTS/gulpfile');
+    gulp.on('task_stop', function (e) {
+      if (e.task === 'simpleTS-transform') {
+        fs.statSync(__dirname + '/../../testOutput/simpleTS/lib/logger.js');
+        done();
+      }
+    });
+    gulp.start('simpleTS-transform');
+  });
+
   it('simple watch task setup works as expected.', function (done) {
     this.timeout(8000);
 

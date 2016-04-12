@@ -42,7 +42,8 @@ function transform(opts) {
       target: 'ES5',
       allowJs: !opts.input.declaration,
       sourceMap: true,
-      declaration: opts.input.declaration
+      declaration: opts.input.declaration,
+      experimentalDecorators: true
     }))
     .on('error', function (err) {
       if (opts.errorHandler) {
