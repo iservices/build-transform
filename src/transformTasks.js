@@ -41,6 +41,7 @@ function transform(opts) {
       module: 'commonjs',
       target: 'ES5',
       allowJs: !opts.input.declaration,
+      noResolve: true,
       sourceMap: true,
       declaration: opts.input.declaration,
       experimentalDecorators: true
@@ -119,6 +120,11 @@ module.exports = function (opts) {
   gulp.task(input.tasksPrefix + 'watch-transform', function () {
     const watch = require('gulp-watch');
     watchStreams[input.tasksPrefix + 'watch-transform'] = watch(input.glob, function (file) {
+      // ignore files that begin with a dot
+      if (path.basename(file.path)[0] === '.') {
+        return;
+      }
+
       console.log('watch transform: ' + file.path + ' event: ' + file.event);
       if (file.event === 'unlink') {
         fs.unlinkSync(path.join(input.outputDir, file.path.slice(input.inputDir.length)));
