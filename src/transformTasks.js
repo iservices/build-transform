@@ -35,7 +35,7 @@ function adjustVinylBase(base) {
  * @returns {stream} A stream that transforms the files.
  */
 function transform(opts) {
-  return gulp.src(opts.input.glob)
+  return gulp.src(opts.input.glob, { read: false })
     .pipe(adjustVinylBase(opts.input.inputDir))
     .pipe(tsc({
       module: 'commonjs',
