@@ -42,18 +42,21 @@ if (!argsv._.length) {
   //
   // print help info if args are missing
   //
-  console.log('Usage: build-transform <files> [<files>] [-i <dir>] [-w]');
+  console.log('Usage: build-transform <files> [<files>] [-i <dir>] [-w] [-k]');
   console.log('');
   console.log('Options:');
   console.log('<files>\t A glob pattern that identifies files to transform.');
   console.log('-i\t The base directory used when creating folder paths in the output directory.  Defaults to the current working directory.');
+  console.log('-k\t When this option is specified the output folder will not be deleted before files are emitted.');
   console.log('-w\t When present the files specified in the -g glob pattern(s) will be watched for changes and transformed when they do change.');
   process.exitCode = 1;
 } else {
   //
   // transform the files
   //
-  del.sync(argsv.o || 'lib/');
+  if (!argsv.k) {
+    del.sync(argsv.o || 'lib/');
+  }
   globby(argsv._).then(files => {
     transform(files, argsv)
       .on('exit', code => {

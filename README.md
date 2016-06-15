@@ -36,7 +36,7 @@ the glob patterns into actual file paths.
 
 Usage:
 ```
-build-transform <files> [<files>] [-i <dir>] [-w]
+build-transform <files> [<files>] [-i <dir>] [-w] [-k]
 ```
 Options:
 
@@ -44,4 +44,5 @@ Options:
 | ---    | ---         |
 | `<files>` | A glob pattern that identifies files to tranform.  Multiple glob patterns can be specified. |
 | -i     | The base directory used when creating folder paths in the output directory.  Defaults to the current working directory. |
+| -k     | When this option is specified the output folder will not be deleted before files are emitted. |
 | -w     | When present the files specified in the files glob pattern(s) will be watched for changes and transformed when they do change. |
