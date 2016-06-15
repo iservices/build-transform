@@ -26,6 +26,11 @@ function transform(files, args) {
     '--experimentalDecorators'
   ]);
 
+  if (args.i) {
+    input.push('--rootDir');
+    input.push(args.i);
+  }
+
   if (args.w || args.W) {
     input.push('-w');
   }
@@ -33,14 +38,15 @@ function transform(files, args) {
   return cp.spawn('tsc', input, { stdio: 'inherit' });
 }
 
-if (!argsv.g) {
+if (!argsv._.length) {
   //
   // print help info if args are missing
   //
-  console.log('Usage: build-transform -g <glob pattern> [-g <glob pattern>] [-w]');
+  console.log('Usage: build-transform <files> [<files>] [-i <dir>] [-w]');
   console.log('');
   console.log('Options:');
-  console.log('-g\t A glob pattern that identifies files to transform.');
+  console.log('<files>\t A glob pattern that identifies files to transform.');
+  console.log('-i\t The base directory used when creating folder paths in the output directory.  Defaults to the current working directory.');
   console.log('-w\t When present the files specified in the -g glob pattern(s) will be watched for changes and transformed when they do change.');
   process.exitCode = 1;
 } else {
@@ -48,7 +54,7 @@ if (!argsv.g) {
   // transform the files
   //
   del.sync(argsv.o || 'lib/');
-  globby(argsv.g).then(files => {
+  globby(argsv._).then(files => {
     transform(files, argsv)
       .on('exit', code => {
         process.exitCode = code;

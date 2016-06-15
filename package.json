@@ -1,6 +1,6 @@
 {
   "name": "build-transform",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Code transformation command line tool.",
   "main": "src/index.js",
   "bin": "src/index.js",
@@ -8,8 +8,8 @@
     "src/"
   ],
   "scripts": {
-    "lint": "build-lint -g \"src/**/*.js\"",
-    "lint-watch": "build-lint -g \"src/**/*.js\" -w"
+    "lint": "build-lint \"src/**/*.js\"",
+    "lint-watch": "build-lint \"src/**/*.js\" -w"
   },
   "keywords": [
     "transform"

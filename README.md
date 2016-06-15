@@ -20,8 +20,8 @@ do this within an npm script element.  Take the following excerpt from an exampl
 ```JSON
 {
   "scripts": {
-    "transform": "build-transform -g \"src/**/*.js\"",
-    "transform-watch": "build-transform -g \"src/**/*.js\" -w",
+    "transform": "build-transform \"src/**/*.js\"",
+    "transform-watch": "build-transform \"src/**/*.js\" -w",
   }
 }
 ```
@@ -36,11 +36,12 @@ the glob patterns into actual file paths.
 
 Usage:
 ```
-build-transform -g <glob pattern> [-g <glob pattern>] [-w]
+build-transform <files> [<files>] [-i <dir>] [-w]
 ```
 Options:
 
 | Option | Description |
 | ---    | ---         |
-| -g     | A glob pattern that identifies files to tranform.  Multiple glob patterns can be specified. |
-| -w     | When present the files specified in the -g glob pattern(s) will be watched for changes and transformed when they do change. |
+| `<files>` | A glob pattern that identifies files to tranform.  Multiple glob patterns can be specified. |
+| -i     | The base directory used when creating folder paths in the output directory.  Defaults to the current working directory. |
+| -w     | When present the files specified in the files glob pattern(s) will be watched for changes and transformed when they do change. |
