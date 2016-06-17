@@ -20,7 +20,6 @@ function getOutputFiles(file, args) {
   const filePath = path.isAbsolute(file) ? file : path.join(process.cwd(), file);
 
   let root = args.i || process.cwd();
-  console.log('ROOT: ' + root);
   if (!path.isAbsolute(root)) {
     root = path.join(process.cwd(), root);
   }
