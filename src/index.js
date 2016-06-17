@@ -4,8 +4,38 @@
 
 const globby = require('globby');
 const del = require('del');
+const chokidar = require('chokidar');
 const cp = require('child_process');
+const path = require('path');
 const argsv = require('minimist')(process.argv.slice(2));
+
+/**
+ * Determine the output directory for the given file and arguments.
+ *
+ * @param {String} file - The file to determine the output directory for.
+ * @param {Object} args - The arguments provided from the command line.
+ * @return {String} The output directory for the file.
+ */
+function getOutputFiles(file, args) {
+  const filePath = path.isAbsolute(file) ? file : path.join(process.cwd(), file);
+
+  let root = args.i || process.cwd();
+  console.log('ROOT: ' + root);
+  if (!path.isAbsolute(root)) {
+    root = path.join(process.cwd(), root);
+  }
+  let outDir = args.o || 'lib';
+  if (!path.isAbsolute(outDir)) {
+    outDir = path.join(process.cwd(), outDir);
+  }
+  outDir = path.join(outDir, path.dirname(filePath).slice(root.length));
+
+  const filename = path.basename(path.basename(filePath, '.ts'), '.js');
+  return [
+    path.join(outDir, filename + '.js'),
+    path.join(outDir, filename + '.js.map')
+  ];
+}
 
 /**
  * Transform the given files.
@@ -31,11 +61,30 @@ function transform(files, args) {
     input.push(args.i);
   }
 
-  if (args.w || args.W) {
-    input.push('-w');
-  }
-
   return cp.spawn('tsc', input, { stdio: 'inherit' });
+}
+
+/**
+ * Watch for changes to the given files and transform them when they do change.
+ *
+ * @ignore
+ * @param {Object} args - The arguments passed into the command line.
+ * @return {void}
+ */
+function transformWatch(args) {
+  if (args._.length) {
+    const watcher = chokidar.watch(args._, {
+      ignored: /[\/\\]\./,
+      persistent: true
+    });
+    watcher.on('ready', () => {
+      watcher.on('add', file => { transform([file], args); });
+      watcher.on('change', file => { transform([file], args); });
+      watcher.on('unlink', file => {
+        del(getOutputFiles(file, args));
+      });
+    });
+  }
 }
 
 if (!argsv._.length) {
@@ -50,6 +99,9 @@ if (!argsv._.length) {
   console.log('-k\t When this option is specified the output folder will not be deleted before files are emitted.');
   console.log('-w\t When present the files specified in the -g glob pattern(s) will be watched for changes and transformed when they do change.');
   process.exitCode = 1;
+} else if (argsv.w) {
+  // watch for file changes
+  transformWatch(argsv);
 } else {
   //
   // transform the files

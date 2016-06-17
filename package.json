@@ -1,6 +1,6 @@
 {
   "name": "build-transform",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Code transformation command line tool.",
   "main": "src/index.js",
   "bin": "src/index.js",
@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "lint": "build-lint \"src/**/*.js\"",
-    "lint-watch": "build-lint \"src/**/*.js\" -w"
+    "lint-watch": "build-lint \"src/**/*.js\" -w",
+    "test": "node . \"src/sub/**/*.js\" -i src"
   },
   "keywords": [
     "transform"
@@ -21,6 +22,7 @@
     "url": "https://github.com/iservices/build-transform.git"
   },
   "dependencies": {
+    "chokidar": "^1.5.2",
     "del": "^2.2.0",
     "globby": "^5.0.0",
     "minimist": "^1.2.0",
