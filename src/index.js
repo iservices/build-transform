@@ -10,11 +10,11 @@ const path = require('path');
 const argsv = require('minimist')(process.argv.slice(2));
 
 /**
- * Determine the output directory for the given file and arguments.
+ * Determine the output files for the given input file and arguments.
  *
- * @param {String} file - The file to determine the output directory for.
+ * @param {String} file - The file to determine the output files for.
  * @param {Object} args - The arguments provided from the command line.
- * @return {String} The output directory for the file.
+ * @return {String[]} The output files for the file.
  */
 function getOutputFiles(file, args) {
   const filePath = path.isAbsolute(file) ? file : path.join(process.cwd(), file);
