@@ -1,6 +1,6 @@
 {
   "name": "build-transform",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Code transformation command line tool.",
   "main": "src/index.js",
   "bin": "src/index.js",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "chokidar": "^1.5.2",
+    "cross-spawn": "^4.0.0",
     "del": "^2.2.0",
     "globby": "^5.0.0",
     "minimist": "^1.2.0",

@@ -5,7 +5,7 @@
 const globby = require('globby');
 const del = require('del');
 const chokidar = require('chokidar');
-const cp = require('child_process');
+const spawn = require('cross-spawn');
 const path = require('path');
 const argsv = require('minimist')(process.argv.slice(2));
 
@@ -60,7 +60,7 @@ function transform(files, args) {
     input.push(args.i);
   }
 
-  return cp.spawn('tsc', input, { stdio: 'inherit' });
+  return spawn('tsc', input, { stdio: 'inherit' });
 }
 
 /**
